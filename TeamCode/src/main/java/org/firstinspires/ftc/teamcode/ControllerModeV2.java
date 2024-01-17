@@ -26,11 +26,11 @@ public class ControllerModeV2 extends LinearOpMode {
 
 
         // Tile size (23 inches) divided by inches per encoder step gives the encoder steps per tile
-        double encoderStepsPerTileLinear = 1025;
+        double encoderStepsPerTileLinear = 1150;
 
-        double encoderStepsPerTileStrafe = 3330;
+        double encoderStepsPerTileStrafe = 3200;
 
-        double encoderStepsPer90Deg = 800;
+        double encoderStepsPer90Deg = -850;
         double autonMotorPower = 0.5;
 
         // Constructor
@@ -311,9 +311,9 @@ public class ControllerModeV2 extends LinearOpMode {
         private double armPosToWristPos = 0.002245456;//posToDegArm*armDegToWristDeg*degToPosWrist;
         private final double wristHome = 0.53;
         private final double wristSafetyPos = 0.63;
-        private final double wristBackdropPos = 0.2499999;
+        private final double wristBackdropPos = 0.2699999;
 
-        private final int armHome = 10;
+        private final int armHome = 0;
         private final int armSafteyPos = 64;
 //        private final int armBackdropPos = 0;
         private final int armBackdropPos = -500;
@@ -343,8 +343,8 @@ public class ControllerModeV2 extends LinearOpMode {
             Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             Arm.setPower(armPower);
             init();
-
         }
+        
         public void liftArm(){
             Arm.setTargetPosition(-700);
             Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -372,14 +372,13 @@ public class ControllerModeV2 extends LinearOpMode {
         }
 
         public void moveToSafety(boolean homeToSafety) {
-            armSpeed = 30;
             if (homeToSafety) {
                 if ((armPos != armSafteyPos) && movingToFromSafety) {
                     if (!(Arm.isBusy() || wristMoving())) {
-                        armPos += armSpeed;
-                        armPos = Math.min(armPos, armSafteyPos);
+
+                        armPos = armSafteyPos;
+                        wristPos = wristHome;
                         Arm.setTargetPosition(armPos);
-                        wristPos += armSpeed * armPosToWristPos;
                         Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         Wrist.setPosition(wristPos);
                     }
@@ -387,13 +386,11 @@ public class ControllerModeV2 extends LinearOpMode {
                     movingToFromSafety = false;
                 }
             } else {
-                armSpeed = -armSpeed;
                 if ((armPos != armHome) && movingToFromSafety) {
                     if (!(Arm.isBusy() || wristMoving())) {
-                        armPos += armSpeed;
-                        armPos = Math.max(armPos, armHome);
+                        armPos = armHome;
+                        wristPos = wristHome;
                         Arm.setTargetPosition(armPos);
-                        wristPos += armSpeed * armPosToWristPos;
                         Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         Wrist.setPosition(wristPos);
                     }
@@ -424,12 +421,13 @@ public class ControllerModeV2 extends LinearOpMode {
                     if (!(Arm.isBusy() || wristMoving())) {
                         armPos = armSafteyPos;
                         Arm.setTargetPosition(armPos);
-                        wristPos = wristSafetyPos;
+                        wristPos = wristHome;
                         Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         Wrist.setPosition(wristPos);
                     }
                 } else if (armPos == armSafteyPos && !(Arm.isBusy() || wristMoving())) {
                     movingToFromBackdrop = false;
+                    Arm.setPower(armPower * 1);
                 }
             }
         }
@@ -498,15 +496,7 @@ public class ControllerModeV2 extends LinearOpMode {
 
 
         }
-        // Additional logic to call when plate movement has concluded
-        /*
-        public void getPos(){
-            double PlateLPosition = PlateL.getPosition();
-            double PlateRPosition = PlateR.getPosition();
-            opMode.telemetry.addData("PlateL Position", PlateLPosition);
-            opMode.telemetry.addData("PlateR Position", PlateRPosition);
-        }
-*/
+
     }
 
     // Class for the Gate
@@ -747,6 +737,8 @@ public class ControllerModeV2 extends LinearOpMode {
                 // Telemetry update. You can add more telemetry outputs as needed for debugging.
 //                telemetry.addData("Lift Position", lift.getLiftPosition()); // Assuming getLiftPosition exists and returns some value
 //                telemetry.addData("Plate Horizontal", plate.isPlateHorizontal()); // Assuming isPlateHorizontal method exists
+                telemetry.addData("average: ", (driveWheels.BackR.getCurrentPosition()+driveWheels.FrontL.getCurrentPosition()+driveWheels.BackL.getCurrentPosition()+driveWheels.FrontR.getCurrentPosition())/4);
+
                 telemetry.update();
             }
         }

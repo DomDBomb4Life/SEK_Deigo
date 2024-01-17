@@ -288,8 +288,7 @@ class Point {
             driveWheels.waitForDrive();
 
         } else if (selectedQuadrant == Quadrant.Q1) {
-            driveWheels.moveLinear(0.1);
-            driveWheels.waitForDrive();
+
             driveWheels.moveLinear(1);
             driveWheels.waitForDrive();
 
@@ -317,7 +316,7 @@ class Point {
                 driveWheels.turn90(1);
                 driveWheels.waitForDrive();
             }
-            driveWheels.moveLinear(2);
+            driveWheels.moveLinear(1.75);
             driveWheels.waitForDrive();
         }
     }
