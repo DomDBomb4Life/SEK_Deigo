@@ -140,7 +140,8 @@ class Point {
 //        placePixel(spike);
 //        park(selectedParkingPosition, selectedTeam);
         failSafe(selectedQuadrant, selectedTeam, selectedParkingPosition );
-        planeLauncher.controlLauncher();
+        while(true){}
+
 
     }
 
@@ -289,34 +290,19 @@ class Point {
 
         } else if (selectedQuadrant == Quadrant.Q1) {
 
-            driveWheels.moveLinear(1);
+            driveWheels.moveLinear(2);
             driveWheels.waitForDrive();
 
             if (selectedTeam == TeamColor.RED) {
-                driveWheels.turn90(-1);
-                driveWheels.waitForDrive();
-                driveWheels.moveLinear(2);
-                driveWheels.waitForDrive();
                 driveWheels.turn90(1);
-                driveWheels.waitForDrive();
-                driveWheels.moveLinear(1);
-                driveWheels.waitForDrive();
-                driveWheels.turn90(-1);
                 driveWheels.waitForDrive();
 
             } else if (selectedTeam == TeamColor.BLUE) {
-                driveWheels.turn90(1);
-                driveWheels.waitForDrive();
-                driveWheels.moveLinear(2);
-                driveWheels.waitForDrive();
                 driveWheels.turn90(-1);
                 driveWheels.waitForDrive();
-                driveWheels.moveLinear(1);
-                driveWheels.waitForDrive();
-                driveWheels.turn90(1);
-                driveWheels.waitForDrive();
+
             }
-            driveWheels.moveLinear(1.75);
+            driveWheels.moveLinear(3.75);
             driveWheels.waitForDrive();
         }
     }

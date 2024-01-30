@@ -507,8 +507,8 @@ public class ControllerModeV2 extends LinearOpMode {
         private boolean gateToggle = true;
         private boolean gateButtonPressed = false;
         private double gatePos;
-        private double close = 0.05;
-        private double open = 0;
+        private double close = 0.38;
+        private double open = 0.32;
 
         public boolean gateObstructed = false;
         private boolean isAttemptingToClose = false;
@@ -540,29 +540,7 @@ public class ControllerModeV2 extends LinearOpMode {
             }
         }
 
-        /*
-        public void controlGate() {
-            opMode.telemetry.addData("time", opMode.time);
-            if (opMode.gamepad2.b && !gateButtonPressed) {
-                gateToggle = !gateToggle; // Toggle the state
-                gateButtonPressed = true;
-            } else if (!opMode.gamepad2.b) {
-                gateButtonPressed = false; // Button has been released, can be pressed again.
-            }
-            if (gateToggle) {
-                closeGate();
-                gateObstructed = isGateObstructed();
-                if (!gateObstructed) {
-                    opMode.telemetry.addLine("Gate Closed");
-                }
-            } else {
-                openGate();
-                gateObstructed = true;
-                opMode.telemetry.addLine("Gate Open");
-            }
 
-        }
-        */
 
         public void openGate() {
             gatePos = open;
