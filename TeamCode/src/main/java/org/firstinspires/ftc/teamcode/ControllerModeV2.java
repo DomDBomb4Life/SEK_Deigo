@@ -314,7 +314,7 @@ public class ControllerModeV2 extends LinearOpMode {
         private final double wristBackdropPos = 0.2699999;
 
         private final int armHome = 0;
-        private final int armSafteyPos = 64;
+        private final int armSafteyPos = 50;
 //        private final int armBackdropPos = 0;
         private final int armBackdropPos = -500;
         private int armSpeed;
@@ -399,6 +399,7 @@ public class ControllerModeV2 extends LinearOpMode {
                 }
             }
         }
+
 
         public void moveToBackdrop(boolean safetyToBack) {
             Arm.setPower(armPower * 0.5);
