@@ -140,7 +140,7 @@ class Point {
 //        placePixel(spike);
 //        park(selectedParkingPosition, selectedTeam);
         failSafe(selectedQuadrant, selectedTeam, selectedParkingPosition );
-        while(true){}
+        while(opModeIsActive()){}
 
 
     }

@@ -372,29 +372,30 @@ public class ControllerModeV2 extends LinearOpMode {
         }
 
         public void moveToSafety(boolean homeToSafety) {
+            opMode.telemetry.addLine("moveToSaftey");
+
             if (homeToSafety) {
                 if ((armPos != armSafteyPos) && movingToFromSafety) {
-                    if (!(Arm.isBusy() || wristMoving())) {
-
+                    if (!(Arm.isBusy())) {
                         armPos = armSafteyPos;
                         wristPos = wristHome;
                         Arm.setTargetPosition(armPos);
                         Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         Wrist.setPosition(wristPos);
                     }
-                } else if (armPos == armSafteyPos && !(Arm.isBusy() || wristMoving())) {
+                } else if (armPos == armSafteyPos && !(Arm.isBusy() )) {
                     movingToFromSafety = false;
                 }
             } else {
                 if ((armPos != armHome) && movingToFromSafety) {
-                    if (!(Arm.isBusy() || wristMoving())) {
+                    if (!(Arm.isBusy() )) {
                         armPos = armHome;
                         wristPos = wristHome;
                         Arm.setTargetPosition(armPos);
                         Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         Wrist.setPosition(wristPos);
                     }
-                } else if (armPos == armHome && !(Arm.isBusy() || wristMoving())) {
+                } else if (armPos == armHome && !(Arm.isBusy() )) {
                     movingToFromSafety = false;
                 }
             }
@@ -402,31 +403,32 @@ public class ControllerModeV2 extends LinearOpMode {
 
 
         public void moveToBackdrop(boolean safetyToBack) {
+            opMode.telemetry.addLine("moveToBackDrop");
             Arm.setPower(armPower * 0.5);
             if (safetyToBack) {
                 if ((armPos != armBackdropPos) && movingToFromBackdrop) {
-                    if (!(Arm.isBusy() || wristMoving())) {
+                    if (!Arm.isBusy()) {
                         armPos = armBackdropPos;
                         wristPos = wristBackdropPos;
                         Arm.setTargetPosition(armPos);
                         Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         Wrist.setPosition(wristPos);
                     }
-                } else if (armPos == armBackdropPos && !(Arm.isBusy() || wristMoving())) {
+                } else if (armPos == armBackdropPos && !(Arm.isBusy() )) {
                     movingToFromBackdrop = false;
                     Arm.setPower(armPower * 1);
 
                 }
             } else {
                 if ((armPos != armSafteyPos) && movingToFromBackdrop) {
-                    if (!(Arm.isBusy() || wristMoving())) {
+                    if (!Arm.isBusy()) {
                         armPos = armSafteyPos;
                         Arm.setTargetPosition(armPos);
                         wristPos = wristHome;
                         Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         Wrist.setPosition(wristPos);
                     }
-                } else if (armPos == armSafteyPos && !(Arm.isBusy() || wristMoving())) {
+                } else if (armPos == armSafteyPos && !(Arm.isBusy() )) {
                     movingToFromBackdrop = false;
                     Arm.setPower(armPower * 1);
                 }
@@ -468,7 +470,9 @@ public class ControllerModeV2 extends LinearOpMode {
 
         public void plateTelemetry() {
             opMode.telemetry.addData("Wrist Position: ", wristPos);
-            opMode.telemetry.addData("Arm Position: ", Arm.getCurrentPosition());
+            opMode.telemetry.addData("Arm Position Set: ", armPos);
+            opMode.telemetry.addData("Arm Position Actual: ", Arm.getCurrentPosition());
+
             opMode.telemetry.addData("calledToMove: ", calledToMove);
             opMode.telemetry.addData("movingToFromSafety: ", movingToFromSafety);
             opMode.telemetry.addData("movingToFromBackdrop: ", movingToFromBackdrop);
@@ -668,7 +672,7 @@ public class ControllerModeV2 extends LinearOpMode {
                 planeButtonPressed = false; // Button has been released, can be pressed again.
             }
             if (planeToggle) {
-                launcherServo.setPosition(1.0);
+                launcherServo.setPosition(0.5);
                 opMode.telemetry.addLine("Plane Launched");
             }else{
                 launcherServo.setPosition(0);
