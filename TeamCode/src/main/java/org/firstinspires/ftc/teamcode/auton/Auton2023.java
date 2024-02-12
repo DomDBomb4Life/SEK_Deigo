@@ -13,32 +13,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
-class Point {
-    public double x;
-    public double y;
-    public double z;
 
-    Point(double x, double y, double z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
-
-    // Method to calculate distance from this point to another point in 3D
-    public List<Double> distanceTo(Point other) {
-        double dx = other.x - this.x;
-        double dy = other.y - this.y;
-        double dz = other.z - this.z;
-        List<Double> points = Arrays.asList(dx, dy, dz);
-
-        return /*Math.sqrt(dx*dx + dy*dy + dz * dz)*/ points;
-    }
-
-    // Method to get a string representation of the point for telemetry
-    public String toString() {
-        return String.format("(X: %.2f, Y: %.2f, Z: %.2f)", this.x, this.y, this.z);
-    }
-}
 @Autonomous(name="Auton2023", group="Linear Opmode")
     public class Auton2023 extends LinearOpMode {
         // Enumerations to represent various options
@@ -56,7 +31,6 @@ class Point {
         private ControllerModeV2.Lift lift;
         private ControllerModeV2.Plate plate;
         private ControllerModeV2.Gate gate;
-        private ControllerModeV2.LinearGeckoWheels geckoWheels;
 
         private ControllerModeV2.PlaneLauncher planeLauncher;
 
@@ -91,12 +65,6 @@ class Point {
         List<Integer> ID_TAGS_OF_INTEREST = new ArrayList<>(); // list of tag IDs of interest
 
 
-        Point point1 = new Point(-2.9,1.7,10.2 ); //
-        Point point2 = new Point(1.3,1.77, 12.4); //
-        Point point3 = new Point(6.4,2.02, 10.4);//
-        ArrayList<Point> aprilTagLocations = new ArrayList<>();
-
-
     public void runOpMode() {
         initCamera();
         for (int i = 1; i <= 587; i++) {
@@ -107,7 +75,6 @@ class Point {
         plate = new ControllerModeV2.Plate(this);
         lift = new ControllerModeV2.Lift(this, plate);
         gate = new ControllerModeV2.Gate(this);
-        geckoWheels = new ControllerModeV2.LinearGeckoWheels(this);
         planeLauncher = new ControllerModeV2.PlaneLauncher(this);
 
         while (!isStarted() && !isStopRequested()) {
@@ -115,10 +82,6 @@ class Point {
             //
             gate.controlGate();
             preGameConfig();
-            int tag = detectTag();
-            if (tag != 0);{
-                spike = tag;
-            }
 
             // Use gamepad1 to cycle selections and display on telemetry
 
@@ -195,91 +158,6 @@ class Point {
         // Adding a sleep to prevent button mashing, making selection changes more controllable
         sleep(100);
     }
-    public void vomitOnSpike(int spike){
-        if (spike == 1 ) {
-            driveWheels.moveLinear(1.1);
-            driveWheels.waitForDrive();
-            driveWheels.strafe(-0.5);
-            driveWheels.waitForDrive();
-            geckoWheels.ejectPixel(false);
-            sleep(1000);
-            driveWheels.moveLinear(-0.1);
-            driveWheels.waitForDrive();
-            driveWheels.strafe(0.5);
-        } else if (spike == 2 ) {
-            driveWheels.moveLinear(1.5);
-            driveWheels.waitForDrive();
-            geckoWheels.ejectPixel(false);
-            sleep(1000);
-            driveWheels.moveLinear(-0.5);
-        } else if (spike == 3 || spike == 0) {
-            driveWheels.moveLinear(1.1);
-            driveWheels.waitForDrive();
-            driveWheels.strafe(0.5);
-            driveWheels.waitForDrive();
-            geckoWheels.ejectPixel(false);
-            sleep(1000);
-            driveWheels.moveLinear(-0.1);
-            driveWheels.waitForDrive();
-            driveWheels.strafe(-0.5);
-        }
-        driveWheels.waitForDrive();
-    }
-    public void moveToBackdrop(Quadrant selectedQuadrant, TeamColor selectedTeam){
-        if (selectedTeam == TeamColor.RED) {
-            driveWheels.turn90(1);
-        } else if(selectedTeam == TeamColor.BLUE){
-            driveWheels.turn90(-1);
-
-        }
-        driveWheels.waitForDrive();
-        if (selectedQuadrant == Quadrant.Q1) {
-            sleep(delayInSeconds * 1000);
-            driveWheels.moveLinear(-3.5);
-
-        } else if (selectedQuadrant == Quadrant.Q2) {
-            driveWheels.moveLinear(-1.5);
-        }
-        driveWheels.waitForDrive();
-        lift.raiseLift();
-        lift.waitForLift();
-    }
-    /*
-    public void placePixel(int spike){
-        if (spike == 1){
-            driveWheels.strafe(0.25);
-        }else if (spike == 3|| spike == 0){
-            driveWheels.strafe(-0.25);
-        }
-        driveWheels.waitForDrive();
-        driveWheels.moveLinear(-0.1);
-        driveWheels.waitForDrive();
-        lift.raiseLift();
-        lift.waitForLift();
-        plate.moveToBackDrop();
-        sleep(1000);
-        gate.openGate();
-        sleep(1000);
-        plate.moveToInit();
-        sleep(1000);
-        driveWheels.moveLinear(0.1);
-        driveWheels.waitForDrive();
-        if (spike == 1){
-            driveWheels.strafe(-0.25);
-        }else if (spike == 3|| spike == 0){
-            driveWheels.strafe(0.25);
-        }
-    }
-     */
-    public void park(ParkingPosition selectedParkingPosition, TeamColor selectedTeam){
-        if ( (selectedParkingPosition == ParkingPosition.POS_1 && selectedTeam == TeamColor.BLUE) || (selectedParkingPosition == ParkingPosition.POS_2 && selectedTeam == TeamColor.RED)){
-            driveWheels.strafe(1.0);
-        } else if ( (selectedParkingPosition == ParkingPosition.POS_2 && selectedTeam == TeamColor.BLUE) || (selectedParkingPosition == ParkingPosition.POS_1 && selectedTeam == TeamColor.RED)){
-            driveWheels.strafe(-1.0);
-        }
-        driveWheels.waitForDrive();
-        driveWheels.moveLinear(-1.0);
-    }
 
     public void failSafe(Quadrant selectedQuadrant, TeamColor selectedTeam, ParkingPosition selectedParkingPosition) {
 
@@ -330,162 +208,7 @@ class Point {
         telemetry.setMsTransmissionInterval(50);
 
     }
-    /*
-    public int detectTag() {
-        ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
-        if(currentDetections.size() != 0)
-        {
-            boolean tagFound = false;
 
-            for(AprilTagDetection tag : currentDetections)
-            {
-                if(tag.id == ID_TAG_OF_INTEREST)
-                {
-                    tagOfInterest = tag;
-                    tagFound = true;
-                    break;
-                }
-            }
-
-            if(tagFound)
-            {
-                telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
-                tagToTelemetry(tagOfInterest);
-            }
-            else
-            {
-                telemetry.addLine("Don't see tag of interest :(");
-
-                if(tagOfInterest == null)
-                {
-                    telemetry.addLine("(The tag has never been seen)");
-                }
-                else
-                {
-                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                    tagToTelemetry(tagOfInterest);
-                }
-            }
-
-        }
-        else
-        {
-            telemetry.addLine("Don't see tag of interest :(");
-
-            if(tagOfInterest == null)
-            {
-                telemetry.addLine("(The tag has never been seen)");
-            }
-            else
-            {
-                telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                tagToTelemetry(tagOfInterest);
-            }
-
-        }
-        if(tagOfInterest == null)
-        {
-            return 0;
-        }
-        else
-        {
-            Point tagPos = new Point(tagOfInterest.pose.x, tagOfInterest.pose.y);
-            aprilTagLocations.add(tagPos);
-            Point nearestPredefinedPoint = findNearestPoint(tagPos);
-            if (nearestPredefinedPoint.equals(point1)) {
-                return 1;
-            } else if (nearestPredefinedPoint.equals(point2)) {
-                return 2;
-            } else if (nearestPredefinedPoint.equals(point3)) {
-                return 3;
-            }
-        }
-        return 0;
-    }
-    */
-    public int detectTag() {
-        ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
-        AprilTagDetection nearestTag = null;
-
-        // Process current detections
-        if(currentDetections.size() != 0) {
-            for(AprilTagDetection tag : currentDetections) {
-                if (ID_TAGS_OF_INTEREST.contains(tag.id)) {
-                    nearestTag = tag;
-                    break; // Found a tag of interest
-                }
-            }
-
-            // Found a tag, proceed with actions
-            if(nearestTag != null) {
-                Point tagPos = new Point(nearestTag.pose.x, nearestTag.pose.y, nearestTag.pose.z); // Create a new 3D point
-                tagToTelemetry(nearestTag);
-                telemetry.addData("Tag Position", tagPos.toString());
-                Point nearestPredefinedPoint = findNearestPredefinedPoint(tagPos);
-
-                // Determine spike value based on the nearest point
-                if (nearestPredefinedPoint.equals(point1)) {
-                    return 1;
-                } else if (nearestPredefinedPoint.equals(point2)) {
-                    return 2;
-                } else if (nearestPredefinedPoint.equals(point3)) {
-                    return 3;
-                }
-
-            } else {
-                telemetry.addLine("No tag of interest detected");
-            }
-        } else {
-            telemetry.addLine("No tag detected");
-        }
-
-        return 0; // Default case if no relevant tag is found
-    }
-
-    // Method to find the nearest point to the tag
-    public Point findNearestPredefinedPoint(Point tagPosition) {
-        // Only need to compare with the predefined points.
-       /* Point nearestPoint = point1; // Default to point1
-        double minDistance = tagPosition.distanceTo(point1);
-        if (tagPosition.distanceTo(point2) < minDistance) {
-            minDistance = tagPosition.distanceTo(point2);
-            nearestPoint = point2;
-        }
-
-        if (tagPosition.distanceTo(point3) < minDistance) {
-            nearestPoint = point3;
-        }*/
-        double p1d = tagPosition.distanceTo(point1).get(0);
-        double p2d = tagPosition.distanceTo(point2).get(0);
-        double p3d = tagPosition.distanceTo(point3).get(0);
-
-        double minDist = Math.min(Math.min(p1d, p2d), p3d);
-        Point nearestPoint = point1;
-        if (minDist == p1d){
-            nearestPoint = point1;
-        } else if (minDist == p2d){
-            nearestPoint = point2;
-        }else if (minDist == p3d){
-            nearestPoint = point3;
-        }
-
-        telemetry.addData("Nearest Point", nearestPoint);
-        telemetry.addData("distanceTo(point1)",tagPosition.distanceTo(point1));
-        telemetry.addData("distanceTo(point2)",tagPosition.distanceTo(point2));
-        telemetry.addData("distanceTo(point3)",tagPosition.distanceTo(point3));
-        return nearestPoint;
-
-
-    }
-    void tagToTelemetry(AprilTagDetection detection)
-    {
-
-        telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
-        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
-
-    }
 }
 
 /*

@@ -21,9 +21,6 @@ public class ControllerModeV2 extends LinearOpMode {
         private final double DEFAULT_POWER = 0.5;
         private final double MAX_POWER = 1.0;
 
-        private final double DECELERATION_START_DISTANCE = 1000; // Placeholder value, need to be experimentally determined
-        private final double DECELERATION_END_DISTANCE = 200; // Placeholder value, need to be experimentally determined
-
 
         // Tile size (23 inches) divided by inches per encoder step gives the encoder steps per tile
         double encoderStepsPerTileLinear = 1150;
@@ -125,27 +122,6 @@ public class ControllerModeV2 extends LinearOpMode {
             BackL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
-        public void strafe(double tiles) {
-            int encoderSteps = (int) (tiles * encoderStepsPerTileStrafe);
-            FrontR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            FrontL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            BackR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            BackL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            FrontL.setPower(autonMotorPower);
-            FrontR.setPower(autonMotorPower);
-            BackL.setPower(autonMotorPower);
-            BackR.setPower(autonMotorPower);
-            FrontR.setTargetPosition(-encoderSteps);
-            FrontL.setTargetPosition(encoderSteps);
-            BackR.setTargetPosition(encoderSteps);
-            BackL.setTargetPosition(-encoderSteps);
-            FrontR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            FrontL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            BackR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            BackL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        }
-
         public void turn90(int direction) {
             int encoderSteps = (int) (direction * encoderStepsPer90Deg);
             FrontR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -183,7 +159,6 @@ public class ControllerModeV2 extends LinearOpMode {
         private double liftPower = 1.0;
         private int maxLiftHeight = 5500;
         private int minLiftHeight = 0;
-        private double SPEED;
         private DcMotor LiftL, LiftR;
         private Plate plate; // Reference to Plate object
         private LinearOpMode opMode;
@@ -209,11 +184,6 @@ public class ControllerModeV2 extends LinearOpMode {
             LiftL.setTargetPosition(liftHeight);
             LiftL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             LiftR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-
-        public double constrain(double var, double min, double max) {
-            var = Math.min(Math.max(var, min), max);
-            return var;
         }
 
         public void controlLift() {
@@ -305,25 +275,14 @@ public class ControllerModeV2 extends LinearOpMode {
         private Servo Wrist;
         private DcMotor Arm;
         private LinearOpMode opMode;
-        private final double posToDegArm = 360.0 / 1425.1;
-        private final double degToPosWrist = 1.0 / 300.0;
-        private final double armDegToWristDeg = -150.0 / 360.0;
-        private double armPosToWristPos = 0.002245456;//posToDegArm*armDegToWristDeg*degToPosWrist;
         private final double wristHome = 0.53;
-        private final double wristSafetyPos = 0.63;
         private final double wristBackdropPos = 0.2699999;
 
         private final int armHome = 0;
         private final int armSafteyPos = 50;
 //        private final int armBackdropPos = 0;
         private final int armBackdropPos = -500;
-        private int armSpeed;
         private double armPower = 1;
-
-        private boolean toggle = true;
-        private boolean buttonPressed = false;
-
-        private final double POSITION_THRESHOLD = 0.05;
         private double wristPos;
         private int armPos;
         private boolean movingToFromSafety = false;
@@ -339,36 +298,14 @@ public class ControllerModeV2 extends LinearOpMode {
             Wrist = opMode.hardwareMap.get(Servo.class, "Wrist");
             Arm = opMode.hardwareMap.get(DcMotor.class, "Arm");
             Arm.setDirection(DcMotorSimple.Direction.REVERSE);
-            ;
             Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             Arm.setPower(armPower);
-            init();
-        }
-        
-        public void liftArm(){
-            Arm.setTargetPosition(-700);
-            Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
 
-        public void lowerArm(){
-            Arm.setTargetPosition(-400);
-            Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-
-        private void init() {
             armPos =armHome;
             Arm.setTargetPosition(armPos);
             Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             wristPos = wristHome;
             Wrist.setPosition(wristPos);
-
-        }
-
-        private boolean wristMoving() {
-            if (Math.abs(Wrist.getPosition() - wristPos) < POSITION_THRESHOLD) {
-                return false;
-            }
-            return true;
         }
 
         public void moveToSafety(boolean homeToSafety) {
@@ -509,16 +446,9 @@ public class ControllerModeV2 extends LinearOpMode {
     public static class Gate {
         private final LinearOpMode opMode;
         private Servo gateServo;
-        private boolean gateToggle = true;
-        private boolean gateButtonPressed = false;
         private double gatePos;
         private double close = 0.38;
         private double open = 0.32;
-
-        public boolean gateObstructed = false;
-        private boolean isAttemptingToClose = false;
-        private double attemptStartTime;
-        private boolean hasBeenOpenedForRetry = false;
 
         public Gate(LinearOpMode opMode) {
             // Initialize servo
@@ -562,86 +492,6 @@ public class ControllerModeV2 extends LinearOpMode {
             gatePos = close;
             gateServo.setPosition(gatePos);
         }
-        /*
-        public void closeGate() {
-            if (!isAttemptingToClose) {
-                // Starting the close attempt now
-                gatePos = close;
-                gateServo.setPosition(gatePos);
-                attemptStartTime = opMode.time;
-                isAttemptingToClose = true; // we are now attempting to close gate
-                hasBeenOpenedForRetry = false; // reset the retry flag
-            } else {
-                // We are in the process of a close attempt
-                if (opMode.time - attemptStartTime < 1.0) {
-                    // We are within the first second of attempting to close.
-                    if (isGateObstructed()) {
-                        // Gate is obstructed, so try to reopen for retry
-                        openGate();
-                    }
-                } else {
-                    // It has been at least one second since we started trying to close
-                    isAttemptingToClose = false;
-                    if (isGateObstructed() && !hasBeenOpenedForRetry) {
-                        // If the gate is still obstructed and we haven't yet tried the open-for-retry, do so now
-                        openGate();
-                    }
-                }
-            }
-            */
-
-        /*
-        private boolean isGateObstructed(){
-        if (Math.abs(gateServo.getPosition()-close)>0.0016) {
-            opMode.telemetry.addLine("Gate Obstructed");
-            return false;
-        }
-        return true;
-        }
-        */
-    }
-
-    public static class LinearGeckoWheels {
-        private DcMotor geckoMotor;
-        private LinearOpMode opMode; // To access gamepad inputs and telemetry from the main op mode
-        private boolean isRunning = true; // Default is running
-        private boolean buttonPressed = false; // To track the current state of the button press
-        private boolean toggle = false;
-        private double wheelPower = 1.0;
-        // Constructor
-        public LinearGeckoWheels(LinearOpMode opMode) {
-            this.opMode = opMode;
-
-            // Initialize motor
-           geckoMotor = opMode.hardwareMap.get(DcMotor.class, "GeckoMotor");
-        }
-
-
-        // Method to update the state of the gecko wheels based on gamepad input
-        public void updateGeckoWheels() {
-            // This is a state-change detection - when the button is pressed, but was not pressed before
-            if (opMode.gamepad2.x && !buttonPressed) {
-                toggle = !toggle ;// Toggle the state only when the button is newly pressed
-                buttonPressed = true;
-            } else if (!opMode.gamepad2.x && buttonPressed) {
-                buttonPressed = false; // Reset the flag when the button is released
-            }
-            if (toggle){
-                geckoMotor.setPower(wheelPower);
-
-            } else {
-                ejectPixel(true);
-            }
-        }
-
-        public void ejectPixel(boolean Fast) {
-            if (Fast){
-                geckoMotor.setPower(-wheelPower);
-            } else {
-                geckoMotor.setPower(-wheelPower);
-            }
-        }
-
     }
 
     // Class for the Plane Launcher
@@ -685,7 +535,6 @@ public class ControllerModeV2 extends LinearOpMode {
     private Lift lift;
     private Plate plate;
     private Gate gate;
-    private LinearGeckoWheels geckoWheels;
     private PlaneLauncher planeLauncher;
     @Override
         public void runOpMode() {
@@ -699,7 +548,6 @@ public class ControllerModeV2 extends LinearOpMode {
             lift = new Lift(this, plate);
             gate = new Gate(this);
             planeLauncher = new PlaneLauncher(this);
-            geckoWheels = new LinearGeckoWheels(this); // Make sure geckoWheels is a class instance variable
 
             // Wait for the game to start (driver presses PLAY)
             waitForStart();
@@ -711,7 +559,6 @@ public class ControllerModeV2 extends LinearOpMode {
                 lift.controlLift();//Uses Gamepad 2 a for raise/lower Lift  and dpad down for lifting robot of field
                 gate.controlGate(); // Uses Gamepad 2 b
               plate.adjustServosManually();
-                geckoWheels.updateGeckoWheels();//Use Gamepad 2 x
                 planeLauncher.controlLauncher();//Use Gamepad 2 y
 
                 plate.plateTelemetry();
