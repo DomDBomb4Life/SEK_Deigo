@@ -8,11 +8,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "Drive")
 public class controllerModeOld<telemetry> extends LinearOpMode {
-
+DriveTrain Wheels = new DriveTrain(this);
     @Override
     public void runOpMode() {
         while (opModeIsActive()) {
-
+            Wheels.drive(this);
         }
     }
 }
