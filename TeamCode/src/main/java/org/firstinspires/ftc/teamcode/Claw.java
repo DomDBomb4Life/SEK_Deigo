@@ -16,12 +16,12 @@ public class Claw {
     }
     //opening and closing claw
     public void OpenClose(){
-        if(opMode.gamepad2.b == 1){
+        if(opMode.gamepad2.b){
             clawposition = 0.32;
         }else{
-            clawposition = 0.38
+            clawposition = 0.38;
         }
-        claw.
+        claw.setPosition(clawposition);
     }
 
 }
