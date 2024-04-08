@@ -68,13 +68,12 @@ public class ControllerModeV2 extends LinearOpMode {
             }
 
             double POWER = DEFAULT_POWER;
-
-            // Apply triggers for manual speed override
             if (opMode.gamepad1.right_trigger > 0) {
                 POWER = MAX_POWER;
             } else if (opMode.gamepad1.left_trigger > 0) {
                 POWER = MIN_POWER;
             }
+
 
             // Set motor powers
             double frontRightPower = constrain(-pivot + (leftStickY - leftStickX), -1.0, 1.0) * POWER;
