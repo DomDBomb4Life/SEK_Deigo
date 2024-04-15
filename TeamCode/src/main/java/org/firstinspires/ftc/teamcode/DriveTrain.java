@@ -29,8 +29,8 @@ public class DriveTrain  {
         updateSpeed(opMode);
         //this parts set power values
         FrontL.setPower((pivot + leftStickX + leftStickY) * speed);
-        FrontR.setPower((-pivot + (leftStickX - leftStickY)) * speed);
-        BackL.setPower((pivot + (leftStickX - leftStickY)) * speed);
+        FrontR.setPower((-pivot + (leftStickY - leftStickX)) * speed);
+        BackL.setPower((pivot + (leftStickY - leftStickX)) * speed);
         BackR.setPower((-pivot + leftStickX + leftStickY) * speed);
     }
     //This changes speed when triggers pressed

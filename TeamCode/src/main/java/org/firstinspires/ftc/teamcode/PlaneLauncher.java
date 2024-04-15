@@ -13,14 +13,16 @@ public class PlaneLauncher {
     OpMode opMode;
     //constructor for launcher
     public PlaneLauncher(LinearOpMode opMode){
-        launcher = opMode.hardwareMap.get(Servo.class,"launcherServo");
+        launcher = opMode.hardwareMap.get(Servo.class,"LauncherServo");
         this.opMode = opMode;
     }
     public void Launch(){
         if(opMode.gamepad2.y && isItLaunched){
             position = closed;
+            isItLaunched = false;
         } else if (opMode.gamepad2.y && !isItLaunched) {
             position = open;
+            isItLaunched = true;
         }
         launcher.setPosition(position);
     }
