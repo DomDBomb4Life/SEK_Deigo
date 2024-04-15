@@ -6,13 +6,22 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "Drive")
-public class controllerModeOld<telemetry> extends LinearOpMode {
-DriveTrain Wheels = new DriveTrain(this);
+@TeleOp(name = "Drive Diego")
+public class ControllerModeV3<telemetry> extends LinearOpMode {
+    //this connects this to other parts of the code
+//DriveTrain Wheels = new DriveTrain(this);
+//Claw claw = new Claw(this);
+//PlaneLauncher planeLaunch = new PlaneLauncher(this);
+   //this is the run function
     @Override
     public void runOpMode() {
         while (opModeIsActive()) {
-            Wheels.drive(this);
+            //this while loop helps the wheels move
+            //Wheels.drive(this);
+            //this helps the claw move
+            //claw.OpenClose();
+            //this helps the launcher move
+            //planeLaunch.Launch();
         }
     }
 }
